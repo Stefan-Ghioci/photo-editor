@@ -1,35 +1,25 @@
-import {withStyles} from '@material-ui/core';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import React from 'react';
+import { withStyles } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import Paper from "@material-ui/core/Paper";
 
-export const StyledMenu = withStyles({
-  paper: {
-    border: '1px solid #d3d4d5',
-  },
-})(props => (
-    <Menu
-        elevation={0}
-        getContentAnchorEl={null}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        {...props}
-    />
-));
-
-export const StyledMenuItem = withStyles(theme => ({
+export const StyledButton = withStyles({
   root: {
-    '&:focus': {
-      backgroundColor: theme.palette.primary.main,
-      '& .MuiListItemText-primary': {
-        color: theme.palette.common.white,
-      },
-    },
-  },
-}))(MenuItem);
+    marginTop: "auto",
+    marginBottom: "auto",
+    marginLeft: "1.25%",
+    marginRight: "1.25%"
+  }
+})(Button);
+
+export const StyledPaper = withStyles({
+  root: {
+    margin: "auto",
+    width: "40%",
+    height: "75%",
+    backgroundColor: "#282c34",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    "& svg": { fontSize: "20vh", color:"rgba(0,0,0,0.25)" }
+  }
+})(Paper);

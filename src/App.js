@@ -1,62 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Button from '@material-ui/core/Button';
-import ListItemText from '@material-ui/core/ListItemText';
-import {StyledMenu, StyledMenuItem} from './StyledMuiComponents';
+import React, { Component } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { StyledButton, StyledPaper } from "./StyledMuiComponents";
+import AppBar from "@material-ui/core/AppBar";
+import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
 
-function App() {
-
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
+class App extends Component {
+  handleImportImage = () => {
+    
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  return (
-    <div className="App">
-      <div className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        PhotoEditor
-      </div>
-      <div className="App-body">
-        <div className="Menu">
-          <Button
-              fullWidth={true}
+  render() {
+    return (
+      <div className="App">
+        <AppBar position="sticky">
+          <div className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            PhotoEditor
+          </div>
+        </AppBar>
+        <div className="App-body">
+          <div className="Menu">
+            <StyledButton
               aria-controls="customized-menu"
               aria-haspopup="true"
               variant="contained"
               color="primary"
-              onClick={handleClick}
-          >
-            File
-          </Button>
-          <StyledMenu
-              id="customized-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-          >
-            <StyledMenuItem>
-              <ListItemText primary="New" />
-            </StyledMenuItem>
-            <StyledMenuItem>
-              <ListItemText primary="Open" />
-            </StyledMenuItem>
-            <StyledMenuItem>
-              <ListItemText primary="Save" />
-            </StyledMenuItem>
-          </StyledMenu>
+              onClick={this.handleImportImage}
+            >
+              Import
+            </StyledButton>
+
+            <StyledButton
+              aria-controls="customized-menu"
+              aria-haspopup="true"
+              variant="contained"
+              color="primary"
+            >
+              Export
+            </StyledButton>
+          </div>
+          <div className="Main-window">
+            <StyledPaper>{<ImageOutlinedIcon />}</StyledPaper>
+            <StyledPaper>{<ImageOutlinedIcon />}</StyledPaper>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default App;

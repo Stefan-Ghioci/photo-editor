@@ -13,7 +13,6 @@
   color: white;
   font-weight: bold;
   font-size: 2.5vh;
-  border-bottom: 1px solid black;
 }
 
 .App-logo {
@@ -23,18 +22,27 @@
 }
 
 .App-body {
-  height: calc(93.75vh - 1px);
+  height: 93.75vh;
   background-color: #202830;
   display: flex;
-  flex-direction: row;
-  justify-content: left;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   width: 100%;
 }
 
 .Menu {
-  background-color: #282c34;
-  width: 25vh;
-  height: 100%;
+  display: flex;
+  flex-direction: row;
+  height: 10vh;
+  align-items: flex-start;
+  justify-content: left;
+  width: 100%;
 }
 
+.Main-window{
+  height: calc(73.75vh - 1px);
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
