@@ -6,8 +6,17 @@ import AppBar from "@material-ui/core/AppBar";
 import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
 
 class App extends Component {
-  handleImportImage = () => {
-    
+  state = { imageLoaded: false, originalImage: null, editedImage: null };
+
+  handleImportImage = event => {
+    if (event.target.files && event.target.files[0]) {
+      let image = URL.createObjectURL(event.target.files[0]);
+      this.setState({
+        originalImage: image,
+        imageLoaded: true,
+        editedImage: image
+      });
+    }
   };
 
   render() {
@@ -21,16 +30,22 @@ class App extends Component {
         </AppBar>
         <div className="App-body">
           <div className="Menu">
+            <input
+              id="myInput"
+              type="file"
+              onChange={this.handleImportImage}
+              ref={ref => (this.upload = ref)}
+              style={{ display: "none" }}
+            />
             <StyledButton
               aria-controls="customized-menu"
               aria-haspopup="true"
               variant="contained"
               color="primary"
-              onClick={this.handleImportImage}
+              onClick={() => this.upload.click()}
             >
               Import
             </StyledButton>
-
             <StyledButton
               aria-controls="customized-menu"
               aria-haspopup="true"
@@ -41,8 +56,20 @@ class App extends Component {
             </StyledButton>
           </div>
           <div className="Main-window">
-            <StyledPaper>{<ImageOutlinedIcon />}</StyledPaper>
-            <StyledPaper>{<ImageOutlinedIcon />}</StyledPaper>
+            <StyledPaper>
+              {this.state.imageLoaded ? (
+                <img src={this.state.originalImage} alt={"originalImage"}/>
+              ) : (
+                <ImageOutlinedIcon />
+              )}
+            </StyledPaper>
+            <StyledPaper>
+              {this.state.imageLoaded ? (
+                <img src={this.state.editedImage}  alt={"editedImage"}/>
+              ) : (
+                <ImageOutlinedIcon />
+              )}
+            </StyledPaper>
           </div>
         </div>
       </div>

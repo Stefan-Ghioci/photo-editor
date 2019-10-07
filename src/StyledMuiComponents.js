@@ -20,6 +20,7 @@ export const StyledPaper = withStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    "& svg": { fontSize: "20vh", color:"rgba(0,0,0,0.25)" }
+    "& svg": { fontSize: "20vh", color: "rgba(0,0,0,0.25)" },
+    "& img": { maxHeight: "90%", maxWidth: "90%" }
   }
 })(Paper);
