@@ -26,22 +26,42 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
+}
+
+.App-footer {
+  height: 16vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .Menu {
   display: flex;
   flex-direction: row;
-  height: 10vh;
-  align-items: flex-start;
-  justify-content: left;
-  width: 100%;
+  height: 12.5vh;
+  align-items: center;
+  width: 95%;
 }
 
-.Main-window{
-  height: calc(73.75vh - 1px);
+.Main-window {
+  height: 65.25vh;
   width: 100%;
   display: flex;
   flex-direction: row;
+}
+
+.Arrow-wrapper {
+  width: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Main-window svg {
+  font-size: 20vh;
+  color: rgba(0, 0, 0, 0.25);
 }

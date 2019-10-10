@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { StyledButton, StyledPaper } from "./StyledMuiComponents";
+import { ImageStyledPaper, StyledButton } from "./StyledMuiComponents";
 import AppBar from "@material-ui/core/AppBar";
 import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
+import ForwardOutlinedIcon from "@material-ui/icons/ForwardOutlined";
 
 class App extends Component {
   state = { imageLoaded: false, originalImage: null, editedImage: null };
@@ -17,6 +18,14 @@ class App extends Component {
         editedImage: image
       });
     }
+  };
+  handleDownloadImage = () => {
+    const link = document.createElement("a");
+    link.href = this.state.editedImage;
+    link.download = "export";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   render() {
@@ -36,6 +45,7 @@ class App extends Component {
               onChange={this.handleImportImage}
               ref={ref => (this.upload = ref)}
               style={{ display: "none" }}
+              accept="image/*"
             />
             <StyledButton
               aria-controls="customized-menu"
@@ -51,26 +61,32 @@ class App extends Component {
               aria-haspopup="true"
               variant="contained"
               color="primary"
+              disabled={!this.state.imageLoaded}
+              onClick={this.handleDownloadImage}
             >
               Export
             </StyledButton>
           </div>
           <div className="Main-window">
-            <StyledPaper>
+            <ImageStyledPaper>
               {this.state.imageLoaded ? (
-                <img src={this.state.originalImage} alt={"originalImage"}/>
+                <img src={this.state.originalImage} alt={"originalImage"} />
               ) : (
                 <ImageOutlinedIcon />
               )}
-            </StyledPaper>
-            <StyledPaper>
+            </ImageStyledPaper>
+            <div className="Arrow-wrapper">
+              <ForwardOutlinedIcon style={{ transform: "rotate(180deg)" }} />
+            </div>
+            <ImageStyledPaper>
               {this.state.imageLoaded ? (
-                <img src={this.state.editedImage}  alt={"editedImage"}/>
+                <img src={this.state.editedImage} alt={"editedImage"} />
               ) : (
                 <ImageOutlinedIcon />
               )}
-            </StyledPaper>
+            </ImageStyledPaper>
           </div>
+          <div className="App-footer"></div>
         </div>
       </div>
     );
