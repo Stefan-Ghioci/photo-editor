@@ -8,7 +8,6 @@ export const imgDataToPixelArray = imgData => {
       alpha: imgData.data[i + 3]
     });
   }
-  debugger;
   return pixelArray;
 };
 

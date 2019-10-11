@@ -8,9 +8,18 @@ import ForwardOutlinedIcon from "@material-ui/icons/ForwardOutlined";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { imgDataToPixelArray, pixelArrayToImgData } from "./Utils";
+import { invertColors } from "./ImageProcessing";
 
 class App extends Component {
-  state = { imageLoaded: false, originalImageSrc: null, editedImageSrc: null };
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      imageLoaded: false,
+      originalImageSrc: null,
+      editedImageSrc: null
+    };
+  }
+
   canvas = document.createElement("canvas");
 
   handleImportImage = event => {
@@ -39,14 +48,11 @@ class App extends Component {
     }));
   };
 
-  handleInvertColors = () => {
+  handleProcessImage = computeFunction => {
     let pixelArray = this.getOriginalImagePixelArray();
 
-    pixelArray.forEach(pixel => {
-      pixel.red = 255 - pixel.red;
-      pixel.green = 255 - pixel.green;
-      pixel.blue = 255 - pixel.blue;
-    });
+    computeFunction(pixelArray);
+
     this.applyChanges(pixelArray);
   };
 
@@ -72,7 +78,6 @@ class App extends Component {
       this.originalImage.naturalWidth,
       this.originalImage.naturalHeight
     );
-    debugger
     this.canvas.getContext("2d").putImageData(imgData, 0, 0);
     this.setState({ editedImageSrc: this.canvas.toDataURL() });
   }
@@ -111,7 +116,7 @@ class App extends Component {
               variant="contained"
               color="primary"
               disabled={!this.state.imageLoaded}
-              onClick={this.handleInvertColors}
+              onClick={this.handleProcessImage(invertColors)}
             >
               Invert Colors
             </Button>
