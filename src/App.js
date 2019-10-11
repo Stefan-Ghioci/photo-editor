@@ -1,32 +1,81 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { ImageStyledPaper, StyledButton } from "./StyledMuiComponents";
+import { ImageStyledPaper } from "./StyledMuiComponents";
 import AppBar from "@material-ui/core/AppBar";
 import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
 import ForwardOutlinedIcon from "@material-ui/icons/ForwardOutlined";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import { imgDataToPixelArray, pixelArrayToImgData } from "./Utils";
 
 class App extends Component {
-  state = { imageLoaded: false, originalImage: null, editedImage: null };
+  state = { imageLoaded: false, originalImageSrc: null, editedImageSrc: null };
+  canvas = document.createElement("canvas");
 
   handleImportImage = event => {
     if (event.target.files && event.target.files[0]) {
       let image = URL.createObjectURL(event.target.files[0]);
       this.setState({
-        originalImage: image,
+        originalImageSrc: image,
         imageLoaded: true,
-        editedImage: image
+        editedImageSrc: image
       });
     }
   };
+
   handleDownloadImage = () => {
     const link = document.createElement("a");
-    link.href = this.state.editedImage;
+    link.href = this.state.editedImageSrc;
     link.download = "export";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
+
+  handleRevertChanges = () => {
+    this.setState(prevState => ({
+      editedImageSrc: prevState.originalImageSrc
+    }));
+  };
+
+  handleInvertColors = () => {
+    let pixelArray = this.getOriginalImagePixelArray();
+
+    pixelArray.forEach(pixel => {
+      pixel.red = 255 - pixel.red;
+      pixel.green = 255 - pixel.green;
+      pixel.blue = 255 - pixel.blue;
+    });
+    this.applyChanges(pixelArray);
+  };
+
+  getOriginalImagePixelArray() {
+    this.canvas.width = this.originalImage.naturalWidth;
+    this.canvas.height = this.originalImage.naturalHeight;
+
+    let context = this.canvas.getContext("2d");
+    context.drawImage(this.originalImage, 0, 0);
+    let imageData = context.getImageData(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    return imgDataToPixelArray(imageData);
+  }
+
+  applyChanges(pixelArray) {
+    const imgData = pixelArrayToImgData(
+      pixelArray,
+      this.originalImage.naturalWidth,
+      this.originalImage.naturalHeight
+    );
+    debugger
+    this.canvas.getContext("2d").putImageData(imgData, 0, 0);
+    this.setState({ editedImageSrc: this.canvas.toDataURL() });
+  }
 
   render() {
     return (
@@ -47,7 +96,7 @@ class App extends Component {
               style={{ display: "none" }}
               accept="image/*"
             />
-            <StyledButton
+            <Button
               aria-controls="customized-menu"
               aria-haspopup="true"
               variant="contained"
@@ -55,8 +104,18 @@ class App extends Component {
               onClick={() => this.upload.click()}
             >
               Import
-            </StyledButton>
-            <StyledButton
+            </Button>
+            <Button
+              aria-controls="customized-menu"
+              aria-haspopup="true"
+              variant="contained"
+              color="primary"
+              disabled={!this.state.imageLoaded}
+              onClick={this.handleInvertColors}
+            >
+              Invert Colors
+            </Button>
+            <Button
               aria-controls="customized-menu"
               aria-haspopup="true"
               variant="contained"
@@ -65,28 +124,42 @@ class App extends Component {
               onClick={this.handleDownloadImage}
             >
               Export
-            </StyledButton>
+            </Button>
           </div>
           <div className="Main-window">
             <ImageStyledPaper>
               {this.state.imageLoaded ? (
-                <img src={this.state.originalImage} alt={"originalImage"} />
+                <img
+                  ref={ref => (this.originalImage = ref)}
+                  src={this.state.originalImageSrc}
+                  alt={"originalImageSrc"}
+                />
               ) : (
                 <ImageOutlinedIcon />
               )}
             </ImageStyledPaper>
             <div className="Arrow-wrapper">
-              <ForwardOutlinedIcon style={{ transform: "rotate(180deg)" }} />
+              <IconButton
+                disabled={!this.state.imageLoaded}
+                onClick={this.handleRevertChanges}
+                size={"small"}
+              >
+                <ForwardOutlinedIcon />
+              </IconButton>
             </div>
             <ImageStyledPaper>
               {this.state.imageLoaded ? (
-                <img src={this.state.editedImage} alt={"editedImage"} />
+                <img
+                  ref={ref => (this.editedImage = ref)}
+                  src={this.state.editedImageSrc}
+                  alt={"editedImageSrc"}
+                />
               ) : (
                 <ImageOutlinedIcon />
               )}
             </ImageStyledPaper>
           </div>
-          <div className="App-footer"></div>
+          <div className="App-footer" />
         </div>
       </div>
     );

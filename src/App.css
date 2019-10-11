@@ -44,6 +44,7 @@
   flex-direction: row;
   height: 12.5vh;
   align-items: center;
+  justify-content: space-between;
   width: 95%;
 }
 
