@@ -116,7 +116,7 @@ class App extends Component {
               variant="contained"
               color="primary"
               disabled={!this.state.imageLoaded}
-              onClick={this.handleProcessImage(invertColors)}
+              onClick={() => this.handleProcessImage(invertColors)}
             >
               Invert Colors
             </Button>
