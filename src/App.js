@@ -8,7 +8,7 @@ import ForwardOutlinedIcon from "@material-ui/icons/ForwardOutlined";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { imgDataToPixelArray, pixelArrayToImgData } from "./Utils";
-import { invertColors } from "./ImageProcessing";
+import { binarize, invertColors } from "./ImageProcessing";
 
 class App extends Component {
   constructor(props, context) {
@@ -42,9 +42,9 @@ class App extends Component {
     document.body.removeChild(link);
   };
 
-  handleRevertChanges = () => {
+  handleMergeChanges = () => {
     this.setState(prevState => ({
-      editedImageSrc: prevState.originalImageSrc
+      originalImageSrc: prevState.editedImageSrc
     }));
   };
 
@@ -126,6 +126,16 @@ class App extends Component {
               variant="contained"
               color="primary"
               disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(binarize)}
+            >
+              Binarize
+            </Button>
+            <Button
+              aria-controls="customized-menu"
+              aria-haspopup="true"
+              variant="contained"
+              color="primary"
+              disabled={!this.state.imageLoaded}
               onClick={this.handleDownloadImage}
             >
               Export
@@ -146,7 +156,7 @@ class App extends Component {
             <div className="Arrow-wrapper">
               <IconButton
                 disabled={!this.state.imageLoaded}
-                onClick={this.handleRevertChanges}
+                onClick={this.handleMergeChanges}
                 size={"small"}
               >
                 <ForwardOutlinedIcon />
