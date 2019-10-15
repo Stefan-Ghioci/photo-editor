@@ -8,7 +8,12 @@ import ForwardOutlinedIcon from "@material-ui/icons/ForwardOutlined";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { imgDataToPixelArray, pixelArrayToImgData } from "./Utils";
-import { binarize, grayscale, invertColors } from "./ImageProcessing";
+import {
+  binarize,
+  grayscale,
+  increaseContrast,
+  invert
+} from "./ImageProcessing";
 
 class App extends Component {
   constructor(props, context) {
@@ -106,7 +111,7 @@ class App extends Component {
             </StyledButton>
             <StyledButton
               disabled={!this.state.imageLoaded}
-              onClick={() => this.handleProcessImage(invertColors)}
+              onClick={() => this.handleProcessImage(invert)}
             >
               Invert Colors
             </StyledButton>
@@ -121,6 +126,12 @@ class App extends Component {
               onClick={() => this.handleProcessImage(binarize)}
             >
               Binarize
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(increaseContrast)}
+            >
+              Increase Contrast
             </StyledButton>
             <StyledButton
               disabled={!this.state.imageLoaded}
