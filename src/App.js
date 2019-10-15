@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { ImageStyledPaper } from "./StyledMuiComponents";
+import { ImageStyledPaper, StyledButton } from "./StyledMuiComponents";
 import AppBar from "@material-ui/core/AppBar";
 import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
 import ForwardOutlinedIcon from "@material-ui/icons/ForwardOutlined";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { imgDataToPixelArray, pixelArrayToImgData } from "./Utils";
-import {binarize, grayscale, invertColors} from './ImageProcessing';
+import { binarize, grayscale, invertColors } from "./ImageProcessing";
 
 class App extends Component {
   constructor(props, context) {
@@ -101,55 +101,33 @@ class App extends Component {
               style={{ display: "none" }}
               accept="image/*"
             />
-            <Button
-              aria-controls="customized-menu"
-              aria-haspopup="true"
-              variant="contained"
-              color="primary"
-              onClick={() => this.upload.click()}
-            >
+            <StyledButton onClick={() => this.upload.click()}>
               Import
-            </Button>
-            <Button
-              aria-controls="customized-menu"
-              aria-haspopup="true"
-              variant="contained"
-              color="primary"
+            </StyledButton>
+            <StyledButton
               disabled={!this.state.imageLoaded}
               onClick={() => this.handleProcessImage(invertColors)}
             >
               Invert Colors
-            </Button>
-            <Button
-                aria-controls="customized-menu"
-                aria-haspopup="true"
-                variant="contained"
-                color="primary"
-                disabled={!this.state.imageLoaded}
-                onClick={() => this.handleProcessImage(grayscale)}
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(grayscale)}
             >
               Grayscale
-            </Button>
-            <Button
-              aria-controls="customized-menu"
-              aria-haspopup="true"
-              variant="contained"
-              color="primary"
+            </StyledButton>
+            <StyledButton
               disabled={!this.state.imageLoaded}
               onClick={() => this.handleProcessImage(binarize)}
             >
               Binarize
-            </Button>
-            <Button
-              aria-controls="customized-menu"
-              aria-haspopup="true"
-              variant="contained"
-              color="primary"
+            </StyledButton>
+            <StyledButton
               disabled={!this.state.imageLoaded}
               onClick={this.handleDownloadImage}
             >
               Export
-            </Button>
+            </StyledButton>
           </div>
           <div className="Main-window">
             <ImageStyledPaper>
