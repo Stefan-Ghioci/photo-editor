@@ -8,7 +8,7 @@ import ForwardOutlinedIcon from "@material-ui/icons/ForwardOutlined";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import { imgDataToPixelArray, pixelArrayToImgData } from "./Utils";
-import { binarize, invertColors } from "./ImageProcessing";
+import {binarize, grayscale, invertColors} from './ImageProcessing';
 
 class App extends Component {
   constructor(props, context) {
@@ -119,6 +119,16 @@ class App extends Component {
               onClick={() => this.handleProcessImage(invertColors)}
             >
               Invert Colors
+            </Button>
+            <Button
+                aria-controls="customized-menu"
+                aria-haspopup="true"
+                variant="contained"
+                color="primary"
+                disabled={!this.state.imageLoaded}
+                onClick={() => this.handleProcessImage(grayscale)}
+            >
+              Grayscale
             </Button>
             <Button
               aria-controls="customized-menu"

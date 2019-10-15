@@ -16,9 +16,18 @@ export const invertColors = pixelArray => {
 
 export const binarize = pixelArray => {
   pixelArray.forEach(pixel => {
-    const color = getBWColor(pixel);
-    pixel.red = color;
-    pixel.green = color;
-    pixel.blue = color;
+    const bwColor = getBWColor(pixel);
+    pixel.red = bwColor;
+    pixel.green = bwColor;
+    pixel.blue = bwColor;
+  });
+};
+
+export const grayscale = pixelArray => {
+  pixelArray.forEach(pixel => {
+    const grayscaleColor = getGrayscaleColor(pixel);
+    pixel.red = grayscaleColor;
+    pixel.green = grayscaleColor;
+    pixel.blue = grayscaleColor;
   });
 };
