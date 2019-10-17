@@ -60,9 +60,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
-.Arrow-wrapper svg {
+.Arrow-wrapper .reverse {
   transform: rotate(180deg);
 }
 
