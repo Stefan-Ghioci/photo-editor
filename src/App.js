@@ -1,32 +1,37 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {ImageStyledPaper, StyledButton} from './StyledMuiComponents';
+import { ImageStyledPaper, StyledButton } from './StyledMuiComponents';
 import AppBar from '@material-ui/core/AppBar';
 import ImageOutlinedIcon from '@material-ui/icons/ImageOutlined';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import IconButton from '@material-ui/core/IconButton';
-import {imgDataToPixelArray, pixelArrayToImgData} from './Utils';
-import {binarize, grayscale, increaseContrast, invert} from './ImageProcessing';
+import { imgDataToPixelArray, pixelArrayToImgData } from './Utils';
+import {
+  binarize,
+  grayscale,
+  increaseContrast,
+  invert
+} from './ImageProcessing';
 
 class App extends Component {
   state = {
     imageLoaded: false,
     originalImageSrc: null,
     editedImageSrc: null,
-    cachedSrc: null,
+    cachedSrc: null
   };
 
   canvas = document.createElement('canvas');
 
   handleResetChanges = () =>
-      this.setState(prevState => {
-        console.log(prevState);
-        return ({
-          originalImageSrc: prevState.cachedSrc,
-          editedImageSrc: prevState.cachedSrc,
-        });
-      });
+    this.setState(prevState => {
+      console.log(prevState);
+      return {
+        originalImageSrc: prevState.cachedSrc,
+        editedImageSrc: prevState.cachedSrc
+      };
+    });
 
   handleImportImage = event => {
     if (event.target.files && event.target.files[0]) {
@@ -35,7 +40,7 @@ class App extends Component {
         originalImageSrc: image,
         imageLoaded: true,
         editedImageSrc: image,
-        cachedSrc: image,
+        cachedSrc: image
       });
     }
   };
@@ -50,14 +55,14 @@ class App extends Component {
   };
 
   handleRevertChanges = () =>
-      this.setState(prevState => ({
-        editedImageSrc: prevState.originalImageSrc,
-      }));
+    this.setState(prevState => ({
+      editedImageSrc: prevState.originalImageSrc
+    }));
 
   handleMergeChanges = () =>
-      this.setState(prevState => ({
-        originalImageSrc: prevState.editedImageSrc,
-      }));
+    this.setState(prevState => ({
+      originalImageSrc: prevState.editedImageSrc
+    }));
 
   handleProcessImage = computeFunction => {
     let pixelArray = this.getOriginalImagePixelArray();
@@ -74,10 +79,10 @@ class App extends Component {
     let context = this.canvas.getContext('2d');
     context.drawImage(this.originalImage, 0, 0);
     let imageData = context.getImageData(
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height,
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height
     );
 
     return imgDataToPixelArray(imageData);
@@ -85,116 +90,116 @@ class App extends Component {
 
   applyChanges(pixelArray) {
     const imgData = pixelArrayToImgData(
-        pixelArray,
-        this.originalImage.naturalWidth,
-        this.originalImage.naturalHeight,
+      pixelArray,
+      this.originalImage.naturalWidth,
+      this.originalImage.naturalHeight
     );
     this.canvas.getContext('2d').putImageData(imgData, 0, 0);
-    this.setState({editedImageSrc: this.canvas.toDataURL()});
+    this.setState({ editedImageSrc: this.canvas.toDataURL() });
   }
 
   render() {
     return (
-        <div className="App">
-          <AppBar position="sticky">
-            <div className="App-header">
-              <img src={logo} className="App-logo" alt="logo"/>
-              PhotoEditor
-            </div>
-          </AppBar>
-          <div className="App-body">
-            <div className="Menu">
-              <input
-                  id="myInput"
-                  type="file"
-                  onChange={this.handleImportImage}
-                  ref={ref => (this.upload = ref)}
-                  style={{display: 'none'}}
-                  accept="image/*"
-              />
-              <StyledButton onClick={() => this.upload.click()}>
-                Import
-              </StyledButton>
-              <StyledButton
-                  disabled={!this.state.imageLoaded}
-                  onClick={this.handleResetChanges}
-              >
-                Reset
-              </StyledButton>
-              <StyledButton
-                  disabled={!this.state.imageLoaded}
-                  onClick={() => this.handleProcessImage(invert)}
-              >
-                Invert Colors
-              </StyledButton>
-              <StyledButton
-                  disabled={!this.state.imageLoaded}
-                  onClick={() => this.handleProcessImage(grayscale)}
-              >
-                Grayscale
-              </StyledButton>
-              <StyledButton
-                  disabled={!this.state.imageLoaded}
-                  onClick={() => this.handleProcessImage(binarize)}
-              >
-                Binarize
-              </StyledButton>
-              <StyledButton
-                  disabled={!this.state.imageLoaded}
-                  onClick={() => this.handleProcessImage(increaseContrast)}
-              >
-                Increase Contrast
-              </StyledButton>
-              <StyledButton
-                  disabled={!this.state.imageLoaded}
-                  onClick={this.handleDownloadImage}
-              >
-                Export
-              </StyledButton>
-            </div>
-            <div className="Main-window">
-              <ImageStyledPaper>
-                {this.state.imageLoaded ? (
-                    <img
-                        ref={ref => (this.originalImage = ref)}
-                        src={this.state.originalImageSrc}
-                        alt={'originalImageSrc'}
-                    />
-                ) : (
-                    <ImageOutlinedIcon/>
-                )}
-              </ImageStyledPaper>
-              <div className="Arrow-wrapper">
-                <IconButton
-                    disabled={!this.state.imageLoaded}
-                    onClick={this.handleMergeChanges}
-                    size={'small'}
-                >
-                  <ArrowForwardIcon className="reverse"/>
-                </IconButton>
-                <IconButton
-                    disabled={!this.state.imageLoaded}
-                    onClick={this.handleRevertChanges}
-                    size={'small'}
-                >
-                  <ArrowForwardIcon/>
-                </IconButton>
-              </div>
-              <ImageStyledPaper>
-                {this.state.imageLoaded ? (
-                    <img
-                        ref={ref => (this.editedImage = ref)}
-                        src={this.state.editedImageSrc}
-                        alt={'editedImageSrc'}
-                    />
-                ) : (
-                    <ImageOutlinedIcon/>
-                )}
-              </ImageStyledPaper>
-            </div>
-            <div className="App-footer"/>
+      <div className='App'>
+        <AppBar position='sticky'>
+          <div className='App-header'>
+            <img src={logo} className='App-logo' alt='logo' />
+            PhotoEditor
           </div>
+        </AppBar>
+        <div className='App-body'>
+          <div className='Menu'>
+            <input
+              id='myInput'
+              type='file'
+              onChange={this.handleImportImage}
+              ref={ref => (this.upload = ref)}
+              style={{ display: 'none' }}
+              accept='image/*'
+            />
+            <StyledButton onClick={() => this.upload.click()}>
+              Import
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={this.handleResetChanges}
+            >
+              Reset
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(invert)}
+            >
+              Invert Colors
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(grayscale)}
+            >
+              Grayscale
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(binarize)}
+            >
+              Binarize
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(increaseContrast)}
+            >
+              Increase Contrast
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={this.handleDownloadImage}
+            >
+              Export
+            </StyledButton>
+          </div>
+          <div className='Main-window'>
+            <ImageStyledPaper>
+              {this.state.imageLoaded ? (
+                <img
+                  ref={ref => (this.originalImage = ref)}
+                  src={this.state.originalImageSrc}
+                  alt={'originalImageSrc'}
+                />
+              ) : (
+                <ImageOutlinedIcon />
+              )}
+            </ImageStyledPaper>
+            <div className='Arrow-wrapper'>
+              <IconButton
+                disabled={!this.state.imageLoaded}
+                onClick={this.handleMergeChanges}
+                size={'small'}
+              >
+                <ArrowForwardIcon className='reverse' />
+              </IconButton>
+              <IconButton
+                disabled={!this.state.imageLoaded}
+                onClick={this.handleRevertChanges}
+                size={'small'}
+              >
+                <ArrowForwardIcon />
+              </IconButton>
+            </div>
+            <ImageStyledPaper>
+              {this.state.imageLoaded ? (
+                <img
+                  ref={ref => (this.editedImage = ref)}
+                  src={this.state.editedImageSrc}
+                  alt={'editedImageSrc'}
+                />
+              ) : (
+                <ImageOutlinedIcon />
+              )}
+            </ImageStyledPaper>
+          </div>
+          <div className='App-footer' />
         </div>
+      </div>
     );
   }
 }
