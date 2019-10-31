@@ -11,7 +11,10 @@ import {
   binarize,
   grayscale,
   increaseContrast,
-  invert
+  invert,
+  rangeCompress,
+  extractBit,
+  diff
 } from './ImageProcessing';
 
 class App extends Component {
@@ -42,6 +45,37 @@ class App extends Component {
         editedImageSrc: image,
         cachedSrc: image
       });
+    }
+  };
+
+  handleImportAndProcessDiffImage = event => {
+    if (event.target.files && event.target.files[0]) {
+      let src = URL.createObjectURL(event.target.files[0]);
+      let diffImage = document.createElement('img');
+      diffImage.src = src;
+      let diffCanvas = document.createElement('canvas');
+      let reference = this;
+      diffImage.addEventListener(
+        'load',
+        function() {
+          diffCanvas.width = diffImage.naturalWidth;
+          diffCanvas.height = diffImage.naturalHeight;
+          let diffContext = diffCanvas.getContext('2d');
+          diffContext.drawImage(diffImage, 0, 0);
+
+          let imageData = diffContext.getImageData(
+            0,
+            0,
+            diffCanvas.width,
+            diffCanvas.height
+          );
+          let diffPixelArray = imgDataToPixelArray(imageData);
+          reference.handleProcessImage(pixelArray =>
+            diff(pixelArray, diffPixelArray)
+          );
+        },
+        false
+      );
     }
   };
 
@@ -132,6 +166,7 @@ class App extends Component {
             >
               Invert Colors
             </StyledButton>
+
             <StyledButton
               disabled={!this.state.imageLoaded}
               onClick={() => this.handleProcessImage(grayscale)}
@@ -197,7 +232,34 @@ class App extends Component {
               )}
             </ImageStyledPaper>
           </div>
-          <div className='App-footer' />
+          <div className='Menu'>
+            <input
+              id='myInput'
+              type='file'
+              onChange={this.handleImportAndProcessDiffImage}
+              ref={ref => (this.uploadDiff = ref)}
+              style={{ display: 'none' }}
+              accept='image/*'
+            />
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.uploadDiff.click()}
+            >
+              Difference
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(extractBit)}
+            >
+              Extract Bit
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(rangeCompress)}
+            >
+              Dynamic Range Compression
+            </StyledButton>
+          </div>
         </div>
       </div>
     );
