@@ -77,8 +77,8 @@ export const extractBit = pixelArray => {
 export const diff = (pixelArray, diffPixelArray) => {
   for (let i = 0; i < pixelArray.length; i++) {
     for (let j = 0; j < pixelArray[i].length; j++) {
-      let pixel = pixelArray[j];
-      let diffPixel = diffPixelArray[j];
+      let pixel = pixelArray[i][j];
+      let diffPixel = diffPixelArray[i][j];
       const tolerance = 25;
       if (
         Math.abs(pixel.red - diffPixel.red) <= tolerance &&
