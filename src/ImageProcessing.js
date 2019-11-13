@@ -12,69 +12,83 @@ const computeRangeCompression = value =>
   (255 / Math.log(256)) * Math.log(1 + value);
 
 export const invert = pixelArray => {
-  pixelArray.forEach(pixel => {
-    pixel.red = 255 - pixel.red;
-    pixel.green = 255 - pixel.green;
-    pixel.blue = 255 - pixel.blue;
-  });
+  pixelArray.forEach(row =>
+    row.forEach(pixel => {
+      pixel.red = 255 - pixel.red;
+      pixel.green = 255 - pixel.green;
+      pixel.blue = 255 - pixel.blue;
+    })
+  );
 };
 
 export const binarize = pixelArray => {
-  pixelArray.forEach(pixel => {
-    const bw = computeBW(pixel);
-    pixel.red = bw;
-    pixel.green = bw;
-    pixel.blue = bw;
-  });
+  pixelArray.forEach(row =>
+    row.forEach(pixel => {
+      const bw = computeBW(pixel);
+      pixel.red = bw;
+      pixel.green = bw;
+      pixel.blue = bw;
+    })
+  );
 };
 
 export const grayscale = pixelArray => {
-  pixelArray.forEach(pixel => {
-    const grayscale = computeGrayscale(pixel);
-    pixel.red = grayscale;
-    pixel.green = grayscale;
-    pixel.blue = grayscale;
-  });
+  pixelArray.forEach(row =>
+    row.forEach(pixel => {
+      const grayscale = computeGrayscale(pixel);
+      pixel.red = grayscale;
+      pixel.green = grayscale;
+      pixel.blue = grayscale;
+    })
+  );
 };
 
 export const increaseContrast = pixelArray => {
-  pixelArray.forEach(pixel => {
-    pixel.red = computeContrastIncrease(pixel.red);
-    pixel.green = computeContrastIncrease(pixel.green);
-    pixel.blue = computeContrastIncrease(pixel.blue);
-  });
+  pixelArray.forEach(row =>
+    row.forEach(pixel => {
+      pixel.red = computeContrastIncrease(pixel.red);
+      pixel.green = computeContrastIncrease(pixel.green);
+      pixel.blue = computeContrastIncrease(pixel.blue);
+    })
+  );
 };
 
 export const rangeCompress = pixelArray => {
-  pixelArray.forEach(pixel => {
-    pixel.red = computeRangeCompression(pixel.red);
-    pixel.green = computeRangeCompression(pixel.green);
-    pixel.blue = computeRangeCompression(pixel.blue);
-  });
+  pixelArray.forEach(row =>
+    row.forEach(pixel => {
+      pixel.red = computeRangeCompression(pixel.red);
+      pixel.green = computeRangeCompression(pixel.green);
+      pixel.blue = computeRangeCompression(pixel.blue);
+    })
+  );
 };
 
 export const extractBit = pixelArray => {
-  pixelArray.forEach(pixel => {
-    const bits = 15;
-    pixel.red = (pixel.red & bits) !== bits ? 255 : pixel.red;
-    pixel.green = (pixel.green & bits) !== bits ? 255 : pixel.green;
-    pixel.blue = (pixel.blue & bits) !== bits ? 255 : pixel.blue;
-  });
+  pixelArray.forEach(row =>
+    row.forEach(pixel => {
+      const bits = 7;
+      pixel.red = (pixel.red & bits) !== bits ? 255 : pixel.red;
+      pixel.green = (pixel.green & bits) !== bits ? 255 : pixel.green;
+      pixel.blue = (pixel.blue & bits) !== bits ? 255 : pixel.blue;
+    })
+  );
 };
 
 export const diff = (pixelArray, diffPixelArray) => {
   for (let i = 0; i < pixelArray.length; i++) {
-    let pixel = pixelArray[i];
-    let diffPixel = diffPixelArray[i];
-    const tolerance = 25;
-    if (
-      Math.abs(pixel.red - diffPixel.red) <= tolerance &&
-      Math.abs(pixel.green - diffPixel.green) <= tolerance &&
-      Math.abs(pixel.blue - diffPixel.blue) <= tolerance
-    ) {
-      pixel.red = 255;
-      pixel.green = 255;
-      pixel.blue = 255;
+    for (let j = 0; j < pixelArray[i].length; j++) {
+      let pixel = pixelArray[j];
+      let diffPixel = diffPixelArray[j];
+      const tolerance = 25;
+      if (
+        Math.abs(pixel.red - diffPixel.red) <= tolerance &&
+        Math.abs(pixel.green - diffPixel.green) <= tolerance &&
+        Math.abs(pixel.blue - diffPixel.blue) <= tolerance
+      ) {
+        pixel.red = 255;
+        pixel.green = 255;
+        pixel.blue = 255;
+      }
     }
   }
 };
