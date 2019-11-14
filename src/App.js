@@ -14,7 +14,11 @@ import {
   invert,
   rangeCompress,
   extractBit,
-  diff
+  diff,
+  laplacian,
+  directional,
+  highPass,
+  bandPass
 } from './ImageProcessing';
 
 class App extends Component {
@@ -252,6 +256,30 @@ class App extends Component {
               onClick={() => this.handleProcessImage(extractBit)}
             >
               Extract Bit
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(directional)}
+            >
+              Directional
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(highPass)}
+            >
+              High Pass
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(bandPass)}
+            >
+              Band Pass
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(laplacian)}
+            >
+              Laplacian
             </StyledButton>
             <StyledButton
               disabled={!this.state.imageLoaded}

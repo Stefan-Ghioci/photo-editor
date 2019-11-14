@@ -2,6 +2,11 @@
   height: 100vh;
 }
 
+.App img {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .App-header {
   height: 6.25vh;
   background-color: #282c34;
