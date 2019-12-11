@@ -320,31 +320,35 @@ const xor = (a, b) => (a ? 1 : 0) ^ (b ? 1 : 0);
 const isBlack = (pixel) =>
   pixel.red === 0 && pixel.green === 0 && pixel.blue === 0;
 
+const isEdge = (pixelArray, i, j) => {
+  const pixel = pixelArray[i][j];
+  const up = pixelArray[i - 1][j];
+  const down = pixelArray[i + 1][j];
+  const left = pixelArray[i][j - 1];
+  const right = pixelArray[i][j + 1];
+
+  return xor(isBlack(pixel), isBlack(up) || isBlack(down)) ||
+    xor(isBlack(pixel), isBlack(left) || isBlack(right));
+};
+
 export const edge = (pixelArray) => {
   let tempArray = JSON.parse(JSON.stringify(pixelArray));
 
   for (let i = 1; i < pixelArray.length - 1; i++)
     for (let j = 1; j < pixelArray[i].length - 1; j++) {
 
-      const pixel = pixelArray[i][j];
-      const up = pixelArray[i - 1][j];
-      const down = pixelArray[i + 1][j];
-      const left = pixelArray[i][j - 1];
-      const right = pixelArray[i][j + 1];
-
-      const isEdge = xor(isBlack(pixel), isBlack(up) || isBlack(down)) ||
-        xor(isBlack(pixel), isBlack(left) || isBlack(right));
-
-      if (!isEdge) {
+      if (!isEdge(pixelArray, i, j)) {
         tempArray[i][j].red = 255;
         tempArray[i][j].green = 255;
         tempArray[i][j].blue = 255;
+
       } else {
         tempArray[i][j].red = 0;
         tempArray[i][j].green = 0;
         tempArray[i][j].blue = 0;
       }
     }
+
   for (let i = 1; i < pixelArray.length - 1; i++)
     for (let j = 1; j < pixelArray[i].length - 1; j++) {
       pixelArray[i][j].red = tempArray[i][j].red;
@@ -352,3 +356,66 @@ export const edge = (pixelArray) => {
       pixelArray[i][j].blue = tempArray[i][j].blue;
     }
 };
+
+export const skeleton = (pixelArray) => {
+    let dist_matrix = Array.from(Array(pixelArray.length),
+      _ => Array(pixelArray[0].length).fill(0));
+
+    let maxDist = 0;
+
+    for (let i = 0; i < pixelArray.length; i++) {
+      for (let j = 0; j < pixelArray[i].length; j++) {
+        if (!isBlack(pixelArray[i][j]))
+          continue;
+
+        let search = 0;
+
+        let found = false;
+        let dist = 0;
+
+        try {
+          while (!found) {
+            for (let k = -search; k <= search; k++)
+              for (let l = -search; l <= search; l++)
+                if (isEdge(pixelArray, i + k, j + l)) {
+                  dist = search;
+                  found = true;
+                }
+            search++;
+          }
+        } catch (ignored) {
+        }
+
+        dist_matrix[i][j] = dist;
+
+        if (dist > maxDist)
+          maxDist = dist;
+      }
+    }
+
+    let temp_dist_matrix = JSON.parse(JSON.stringify(dist_matrix));
+
+  let search = 2;
+  for (let i = search; i < dist_matrix.length - search; i++) {
+      for (let j = search; j < dist_matrix[i].length - search; j++) {
+        for (let k = -search; k <= search; k++)
+          for (let l = -search; l <= search; l++)
+            if (dist_matrix[i][j] < dist_matrix[i + k][j + l])
+              temp_dist_matrix[i][j] = 0;
+      }
+    }
+    for (let i = 0; i < dist_matrix.length; i++) {
+      for (let j = 0; j < dist_matrix[i].length; j++) {
+        dist_matrix[i][j] = temp_dist_matrix[i][j];
+      }
+    }
+
+    for (let i = 0; i < pixelArray.length; i++) {
+      for (let j = 0; j < pixelArray[i].length; j++) {
+        pixelArray[i][j].red = 255 - 255 * dist_matrix[i][j] / maxDist;
+        pixelArray[i][j].green = 255 - 255 * dist_matrix[i][j] / maxDist;
+        pixelArray[i][j].blue = 255 - 255 * dist_matrix[i][j] / maxDist;
+      }
+    }
+  }
+;

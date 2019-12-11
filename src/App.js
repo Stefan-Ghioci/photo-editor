@@ -12,14 +12,14 @@ import {
   binarize,
   diff,
   directional,
+  edge,
   extractBit,
   grayscale,
   highPass,
   increaseContrast,
   invert,
   laplacian,
-  rangeCompress,
-  edge
+  rangeCompress, skeleton
 } from "./ImageProcessing";
 
 class App extends Component {
@@ -243,7 +243,12 @@ class App extends Component {
             >
               Edge
             </StyledButton>
-
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(skeleton)}
+            >
+              Skeleton
+            </StyledButton>
           </div>
           <div className='Menu'>
             <input
