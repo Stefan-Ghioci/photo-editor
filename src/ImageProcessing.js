@@ -134,9 +134,9 @@ export const bandPass = pixelArray => {
   let tempArray2 = JSON.parse(JSON.stringify(pixelArray));
 
   const lowPassMatrix1 = [
-    [1/16, 1/8, 1/16],
-    [1/8, 1/4, 1/8],
-    [1/16, 1/8, 1/16]
+    [1 / 16, 1 / 8, 1 / 16],
+    [1 / 8, 1 / 4, 1 / 8],
+    [1 / 16, 1 / 8, 1 / 16]
   ];
 
   for (let i = 1; i < pixelArray.length - 1; i++)
@@ -157,35 +157,38 @@ export const bandPass = pixelArray => {
       tempArray1[i][j].blue = newPixel.blue;
     }
 
-    const lowPassMatrix2 = [
-      [0, 1/8, 0],
-      [1/8, 1/2, 1/8],
-      [0, 1/8, 0]
-    ];
-  
-    for (let i = 1; i < pixelArray.length - 1; i++)
-      for (let j = 1; j < pixelArray[i].length - 1; j++) {
-        let newPixel = { red: 0, green: 0, blue: 0 };
-  
-        for (let k = -1; k <= 1; k++)
-          for (let l = -1; l <= 1; l++) {
-            const weight = lowPassMatrix2[1 + k][1 + l];
-  
-            newPixel.red += pixelArray[i + k][j + l].red * weight;
-            newPixel.green += pixelArray[i + k][j + l].green * weight;
-            newPixel.blue += pixelArray[i + k][j + l].blue * weight;
-          }
-  
-        tempArray2[i][j].red = newPixel.red;
-        tempArray2[i][j].green = newPixel.green;
-        tempArray2[i][j].blue = newPixel.blue;
-      }
+  const lowPassMatrix2 = [
+    [0, 1 / 8, 0],
+    [1 / 8, 1 / 2, 1 / 8],
+    [0, 1 / 8, 0]
+  ];
 
   for (let i = 1; i < pixelArray.length - 1; i++)
     for (let j = 1; j < pixelArray[i].length - 1; j++) {
-      pixelArray[i][j].red = getNormalisedPixelValue(tempArray2[i][j].red - tempArray1[i][j].red);
-      pixelArray[i][j].green = getNormalisedPixelValue(tempArray2[i][j].green - tempArray1[i][j].green);
-      pixelArray[i][j].blue = getNormalisedPixelValue(tempArray2[i][j].blue - tempArray1[i][j].blue);
+      let newPixel = { red: 0, green: 0, blue: 0 };
+
+      for (let k = -1; k <= 1; k++)
+        for (let l = -1; l <= 1; l++) {
+          const weight = lowPassMatrix2[1 + k][1 + l];
+
+          newPixel.red += pixelArray[i + k][j + l].red * weight;
+          newPixel.green += pixelArray[i + k][j + l].green * weight;
+          newPixel.blue += pixelArray[i + k][j + l].blue * weight;
+        }
+
+      tempArray2[i][j].red = newPixel.red;
+      tempArray2[i][j].green = newPixel.green;
+      tempArray2[i][j].blue = newPixel.blue;
+    }
+
+  for (let i = 1; i < pixelArray.length - 1; i++)
+    for (let j = 1; j < pixelArray[i].length - 1; j++) {
+      pixelArray[i][j].red = getNormalisedPixelValue(
+        tempArray2[i][j].red - tempArray1[i][j].red);
+      pixelArray[i][j].green = getNormalisedPixelValue(
+        tempArray2[i][j].green - tempArray1[i][j].green);
+      pixelArray[i][j].blue = getNormalisedPixelValue(
+        tempArray2[i][j].blue - tempArray1[i][j].blue);
     }
 };
 
@@ -193,9 +196,9 @@ export const highPass = pixelArray => {
   let tempArray = JSON.parse(JSON.stringify(pixelArray));
 
   const matrix = [
-    [1/16, 1/8, 1/16],
-    [1/8, 1/4, 1/8],
-    [1/16, 1/8, 1/16]
+    [1 / 16, 1 / 8, 1 / 16],
+    [1 / 8, 1 / 4, 1 / 8],
+    [1 / 16, 1 / 8, 1 / 16]
   ];
 
   for (let i = 1; i < pixelArray.length - 1; i++)
@@ -218,9 +221,12 @@ export const highPass = pixelArray => {
 
   for (let i = 1; i < pixelArray.length - 1; i++)
     for (let j = 1; j < pixelArray[i].length - 1; j++) {
-      pixelArray[i][j].red = getNormalisedPixelValue(pixelArray[i][j].red - tempArray[i][j].red);
-      pixelArray[i][j].green = getNormalisedPixelValue(pixelArray[i][j].green - tempArray[i][j].green);
-      pixelArray[i][j].blue = getNormalisedPixelValue(pixelArray[i][j].blue - tempArray[i][j].blue);
+      pixelArray[i][j].red = getNormalisedPixelValue(
+        pixelArray[i][j].red - tempArray[i][j].red);
+      pixelArray[i][j].green = getNormalisedPixelValue(
+        pixelArray[i][j].green - tempArray[i][j].green);
+      pixelArray[i][j].blue = getNormalisedPixelValue(
+        pixelArray[i][j].blue - tempArray[i][j].blue);
     }
 };
 
@@ -273,22 +279,22 @@ export const directional = pixelArray => {
 
       let minDiff = Math.abs(
         avgPixels[0].red +
-          avgPixels[0].green +
-          avgPixels[0].blue -
-          pixel.red -
-          pixel.green -
-          pixel.blue
+        avgPixels[0].green +
+        avgPixels[0].blue -
+        pixel.red -
+        pixel.green -
+        pixel.blue
       );
       let bestPixel = avgPixels[0];
 
       for (let m = 1; m < 4; m++) {
         const diff = Math.abs(
           avgPixels[m].red +
-            avgPixels[m].green +
-            avgPixels[m].blue -
-            pixel.red -
-            pixel.green -
-            pixel.blue
+          avgPixels[m].green +
+          avgPixels[m].blue -
+          pixel.red -
+          pixel.green -
+          pixel.blue
         );
         if (diff < minDiff) {
           bestPixel = avgPixels[m];
@@ -301,6 +307,44 @@ export const directional = pixelArray => {
       tempArray[i][j].blue = bestPixel.blue;
     }
 
+  for (let i = 1; i < pixelArray.length - 1; i++)
+    for (let j = 1; j < pixelArray[i].length - 1; j++) {
+      pixelArray[i][j].red = tempArray[i][j].red;
+      pixelArray[i][j].green = tempArray[i][j].green;
+      pixelArray[i][j].blue = tempArray[i][j].blue;
+    }
+};
+
+const xor = (a, b) => (a ? 1 : 0) ^ (b ? 1 : 0);
+
+const isBlack = (pixel) =>
+  pixel.red === 0 && pixel.green === 0 && pixel.blue === 0;
+
+export const edge = (pixelArray) => {
+  let tempArray = JSON.parse(JSON.stringify(pixelArray));
+
+  for (let i = 1; i < pixelArray.length - 1; i++)
+    for (let j = 1; j < pixelArray[i].length - 1; j++) {
+
+      const pixel = pixelArray[i][j];
+      const up = pixelArray[i - 1][j];
+      const down = pixelArray[i + 1][j];
+      const left = pixelArray[i][j - 1];
+      const right = pixelArray[i][j + 1];
+
+      const isEdge = xor(isBlack(pixel), isBlack(up) || isBlack(down)) ||
+        xor(isBlack(pixel), isBlack(left) || isBlack(right));
+
+      if (!isEdge) {
+        tempArray[i][j].red = 255;
+        tempArray[i][j].green = 255;
+        tempArray[i][j].blue = 255;
+      } else {
+        tempArray[i][j].red = 0;
+        tempArray[i][j].green = 0;
+        tempArray[i][j].blue = 0;
+      }
+    }
   for (let i = 1; i < pixelArray.length - 1; i++)
     for (let j = 1; j < pixelArray[i].length - 1; j++) {
       pixelArray[i][j].red = tempArray[i][j].red;

@@ -1,25 +1,26 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { ImageStyledPaper, StyledButton } from './StyledMuiComponents';
-import AppBar from '@material-ui/core/AppBar';
-import ImageOutlinedIcon from '@material-ui/icons/ImageOutlined';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import IconButton from '@material-ui/core/IconButton';
-import { imgDataToPixelArray, pixelArrayToImgData } from './Utils';
+import React, { Component } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { ImageStyledPaper, StyledButton } from "./StyledMuiComponents";
+import AppBar from "@material-ui/core/AppBar";
+import ImageOutlinedIcon from "@material-ui/icons/ImageOutlined";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import IconButton from "@material-ui/core/IconButton";
+import { imgDataToPixelArray, pixelArrayToImgData } from "./Utils";
 import {
+  bandPass,
   binarize,
+  diff,
+  directional,
+  extractBit,
   grayscale,
+  highPass,
   increaseContrast,
   invert,
-  rangeCompress,
-  extractBit,
-  diff,
   laplacian,
-  directional,
-  highPass,
-  bandPass
-} from './ImageProcessing';
+  rangeCompress,
+  edge
+} from "./ImageProcessing";
 
 class App extends Component {
   state = {
@@ -29,7 +30,7 @@ class App extends Component {
     cachedSrc: null
   };
 
-  canvas = document.createElement('canvas');
+  canvas = document.createElement("canvas");
 
   handleResetChanges = () =>
     this.setState(prevState => {
@@ -55,16 +56,16 @@ class App extends Component {
   handleImportAndProcessDiffImage = event => {
     if (event.target.files && event.target.files[0]) {
       let src = URL.createObjectURL(event.target.files[0]);
-      let diffImage = document.createElement('img');
+      let diffImage = document.createElement("img");
       diffImage.src = src;
-      let diffCanvas = document.createElement('canvas');
+      let diffCanvas = document.createElement("canvas");
       let reference = this;
       diffImage.addEventListener(
-        'load',
+        "load",
         function() {
           diffCanvas.width = diffImage.naturalWidth;
           diffCanvas.height = diffImage.naturalHeight;
-          let diffContext = diffCanvas.getContext('2d');
+          let diffContext = diffCanvas.getContext("2d");
           diffContext.drawImage(diffImage, 0, 0);
 
           let imageData = diffContext.getImageData(
@@ -84,9 +85,9 @@ class App extends Component {
   };
 
   handleDownloadImage = () => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = this.state.editedImageSrc;
-    link.download = 'export';
+    link.download = "export";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -114,7 +115,7 @@ class App extends Component {
     this.canvas.width = this.originalImage.naturalWidth;
     this.canvas.height = this.originalImage.naturalHeight;
 
-    let context = this.canvas.getContext('2d');
+    let context = this.canvas.getContext("2d");
     context.drawImage(this.originalImage, 0, 0);
     let imageData = context.getImageData(
       0,
@@ -132,7 +133,7 @@ class App extends Component {
       this.originalImage.naturalWidth,
       this.originalImage.naturalHeight
     );
-    this.canvas.getContext('2d').putImageData(imgData, 0, 0);
+    this.canvas.getContext("2d").putImageData(imgData, 0, 0);
     this.setState({ editedImageSrc: this.canvas.toDataURL() });
   }
 
@@ -141,7 +142,7 @@ class App extends Component {
       <div className='App'>
         <AppBar position='sticky'>
           <div className='App-header'>
-            <img src={logo} className='App-logo' alt='logo' />
+            <img src={logo} className='App-logo' alt='logo'/>
             PhotoEditor
           </div>
         </AppBar>
@@ -152,7 +153,7 @@ class App extends Component {
               type='file'
               onChange={this.handleImportImage}
               ref={ref => (this.upload = ref)}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               accept='image/*'
             />
             <StyledButton onClick={() => this.upload.click()}>
@@ -202,39 +203,47 @@ class App extends Component {
                 <img
                   ref={ref => (this.originalImage = ref)}
                   src={this.state.originalImageSrc}
-                  alt={'originalImageSrc'}
+                  alt={"originalImageSrc"}
                 />
               ) : (
-                <ImageOutlinedIcon />
+                <ImageOutlinedIcon/>
               )}
             </ImageStyledPaper>
             <div className='Arrow-wrapper'>
               <IconButton
                 disabled={!this.state.imageLoaded}
                 onClick={this.handleMergeChanges}
-                size={'small'}
+                size={"small"}
               >
-                <ArrowForwardIcon className='reverse' />
+                <ArrowForwardIcon className='reverse'/>
               </IconButton>
               <IconButton
                 disabled={!this.state.imageLoaded}
                 onClick={this.handleRevertChanges}
-                size={'small'}
+                size={"small"}
               >
-                <ArrowForwardIcon />
+                <ArrowForwardIcon/>
               </IconButton>
             </div>
             <ImageStyledPaper>
               {this.state.imageLoaded ? (
                 <img
-                  ref={ref => (this.editedImage = ref)}
                   src={this.state.editedImageSrc}
-                  alt={'editedImageSrc'}
+                  alt={"editedImageSrc"}
                 />
               ) : (
-                <ImageOutlinedIcon />
+                <ImageOutlinedIcon/>
               )}
             </ImageStyledPaper>
+          </div>
+          <div className='Menu'>
+            <StyledButton
+              disabled={!this.state.imageLoaded}
+              onClick={() => this.handleProcessImage(edge)}
+            >
+              Edge
+            </StyledButton>
+
           </div>
           <div className='Menu'>
             <input
@@ -242,7 +251,7 @@ class App extends Component {
               type='file'
               onChange={this.handleImportAndProcessDiffImage}
               ref={ref => (this.uploadDiff = ref)}
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               accept='image/*'
             />
             <StyledButton
