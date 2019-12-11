@@ -19,7 +19,9 @@ import {
   increaseContrast,
   invert,
   laplacian,
-  rangeCompress, skeleton
+  rangeCompress,
+  reconstruct,
+  skeleton
 } from "./ImageProcessing";
 
 class App extends Component {
@@ -27,7 +29,9 @@ class App extends Component {
     imageLoaded: false,
     originalImageSrc: null,
     editedImageSrc: null,
-    cachedSrc: null
+    cachedSrc: null,
+    dist_matrix: null,
+    skeleton: false
   };
 
   canvas = document.createElement("canvas");
@@ -106,9 +110,12 @@ class App extends Component {
   handleProcessImage = computeFunction => {
     let pixelArray = this.getOriginalImagePixelArray();
 
-    computeFunction(pixelArray);
+    const result = computeFunction(pixelArray);
 
     this.applyChanges(pixelArray);
+
+    if (result !== null)
+      return result;
   };
 
   getOriginalImagePixelArray() {
@@ -245,9 +252,24 @@ class App extends Component {
             </StyledButton>
             <StyledButton
               disabled={!this.state.imageLoaded}
-              onClick={() => this.handleProcessImage(skeleton)}
+              onClick={() => {
+                this.setState({
+                  dist_matrix: this.handleProcessImage(skeleton),
+                  skeleton: true
+                });
+              }}
             >
               Skeleton
+            </StyledButton>
+            <StyledButton
+              disabled={!this.state.imageLoaded || !this.state.skeleton}
+              onClick={() => {
+                this.handleProcessImage(pixelArray =>
+                  reconstruct(pixelArray, this.state.dist_matrix));
+                this.setState({ skeleton: false, dist_matrix: null });
+              }}
+            >
+              Reconstruct
             </StyledButton>
           </div>
           <div className='Menu'>

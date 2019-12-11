@@ -358,64 +358,84 @@ export const edge = (pixelArray) => {
 };
 
 export const skeleton = (pixelArray) => {
-    let dist_matrix = Array.from(Array(pixelArray.length),
-      _ => Array(pixelArray[0].length).fill(0));
+  let dist_matrix = Array.from(Array(pixelArray.length),
+    _ => Array(pixelArray[0].length).fill(0));
 
-    let maxDist = 0;
+  let maxDist = 0;
 
-    for (let i = 0; i < pixelArray.length; i++) {
-      for (let j = 0; j < pixelArray[i].length; j++) {
-        if (!isBlack(pixelArray[i][j]))
-          continue;
+  for (let i = 0; i < pixelArray.length; i++) {
+    for (let j = 0; j < pixelArray[i].length; j++) {
+      if (!isBlack(pixelArray[i][j]))
+        continue;
 
-        let search = 0;
+      let search = 0;
 
-        let found = false;
-        let dist = 0;
+      let found = false;
+      let dist = 0;
 
-        try {
-          while (!found) {
-            for (let k = -search; k <= search; k++)
-              for (let l = -search; l <= search; l++)
-                if (isEdge(pixelArray, i + k, j + l)) {
-                  dist = search;
-                  found = true;
-                }
-            search++;
-          }
-        } catch (ignored) {
+      try {
+        while (!found) {
+          for (let k = -search; k <= search; k++)
+            for (let l = -search; l <= search; l++)
+              if (isEdge(pixelArray, i + k, j + l)) {
+                dist = search;
+                found = true;
+              }
+          search++;
         }
-
-        dist_matrix[i][j] = dist;
-
-        if (dist > maxDist)
-          maxDist = dist;
+      } catch (ignored) {
       }
-    }
 
-    let temp_dist_matrix = JSON.parse(JSON.stringify(dist_matrix));
+      dist_matrix[i][j] = dist;
 
-  let search = 2;
-  for (let i = search; i < dist_matrix.length - search; i++) {
-      for (let j = search; j < dist_matrix[i].length - search; j++) {
-        for (let k = -search; k <= search; k++)
-          for (let l = -search; l <= search; l++)
-            if (dist_matrix[i][j] < dist_matrix[i + k][j + l])
-              temp_dist_matrix[i][j] = 0;
-      }
+      if (dist > maxDist)
+        maxDist = dist;
     }
-    for (let i = 0; i < dist_matrix.length; i++) {
-      for (let j = 0; j < dist_matrix[i].length; j++) {
-        dist_matrix[i][j] = temp_dist_matrix[i][j];
-      }
-    }
+  }
 
-    for (let i = 0; i < pixelArray.length; i++) {
-      for (let j = 0; j < pixelArray[i].length; j++) {
-        pixelArray[i][j].red = 255 - 255 * dist_matrix[i][j] / maxDist;
-        pixelArray[i][j].green = 255 - 255 * dist_matrix[i][j] / maxDist;
-        pixelArray[i][j].blue = 255 - 255 * dist_matrix[i][j] / maxDist;
+  // let temp_dist_matrix = JSON.parse(JSON.stringify(dist_matrix));
+  //
+  // let search = 2;
+  // for (let i = search; i < dist_matrix.length - search; i++) {
+  //   for (let j = search; j < dist_matrix[i].length - search; j++) {
+  //     for (let k = -search; k <= search; k++)
+  //       for (let l = -search; l <= search; l++)
+  //         if (dist_matrix[i][j] < dist_matrix[i + k][j + l])
+  //           temp_dist_matrix[i][j] = 0;
+  //   }
+  // }
+  // for (let i = 0; i < dist_matrix.length; i++) {
+  //   for (let j = 0; j < dist_matrix[i].length; j++) {
+  //     dist_matrix[i][j] = temp_dist_matrix[i][j];
+  //   }
+  // }
+
+  for (let i = 0; i < pixelArray.length; i++) {
+    for (let j = 0; j < pixelArray[i].length; j++) {
+      pixelArray[i][j].red = 255 - 255 * dist_matrix[i][j] / maxDist;
+      pixelArray[i][j].green = 255 - 255 * dist_matrix[i][j] / maxDist;
+      pixelArray[i][j].blue = 255 - 255 * dist_matrix[i][j] / maxDist;
+    }
+  }
+
+  return dist_matrix;
+};
+
+export const reconstruct = (pixelArray, dist_matrix) => {
+  for (let i = 0; i < dist_matrix.length; i++) {
+    for (let j = 0; j < dist_matrix[i].length; j++) {
+      let dist = dist_matrix[i][j];
+      if (dist !== 0) {
+        for (let k = -dist; k <= dist; k++)
+          for (let l = -dist; l <= dist; l++) {
+            if ((Math.pow(Math.abs(k), 2)) + Math.pow(Math.abs(l), 2) <=
+              Math.pow(dist, 2)) {
+              pixelArray[i + k][j + l].red = 0;
+              pixelArray[i + k][j + l].green = 0;
+              pixelArray[i + k][j + l].blue = 0;
+            }
+          }
       }
     }
   }
-;
+};
